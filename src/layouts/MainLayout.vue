@@ -1,106 +1,101 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
+  <q-layout view="hHh lpr lFf">
+
+    <q-header elevated class="bg-primary text-white" height-hint="98">
       <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
+        <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
 
         <q-toolbar-title>
-          Quasar App
+          <q-avatar>
+            <q-icon name="auto_stories" />
+          </q-avatar>
+          Ketab Yaad
+          <CurrentDate />
         </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <q-btn dense flat round icon="menu" @click="toggleRightDrawer" />
       </q-toolbar>
+
+      <q-tabs align="left">
+        <q-route-tab to="/page1" label="Page One" />
+        <q-route-tab to="/page2" label="Page Two" />
+        <q-route-tab to="/page3" label="Page Three" />
+      </q-tabs>
     </q-header>
 
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-    >
-      <q-list>
-        <q-item-label
-          header
-        >
-          Essential Links
-        </q-item-label>
+    <q-drawer v-model="leftDrawerOpen" side="left" overlay bordered>
+      <!-- drawer content -->
+    </q-drawer>
 
-        <EssentialLink
-          v-for="link in linksList"
-          :key="link.title"
-          v-bind="link"
-        />
-      </q-list>
+    <q-drawer show-if-above v-model="rightDrawerOpen" side="right" bordered>
+      <!-- drawer content -->
     </q-drawer>
 
     <q-page-container>
       <router-view />
+      <AddBookPopup v-model:dialog="dialog" @book-added="handleBookAdded" />
     </q-page-container>
+
+
+
+    <q-footer elevated class="bg-grey-8 text-white">
+      <q-toolbar>
+        <q-toolbar-title>
+          <q-avatar>
+            <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg">
+          </q-avatar>
+          <div>Title</div>
+          <div class="fixed-bottom-right q-mr-lg q-mb-lg">
+            <q-btn round color="secondary" icon="library_add" class="q-mr-sm" @click="showDialog" />
+            <q-btn round color="primary" icon="add_circle" />
+          </div>
+        </q-toolbar-title>
+      </q-toolbar>
+    </q-footer>
+
   </q-layout>
 </template>
 
-<script setup>
+<script>
 import { ref } from 'vue'
-import EssentialLink from 'components/EssentialLink.vue'
+import DateComponent from 'src/components/DateComponent.vue';
+import AddBookPopup from 'src/components/AddBookPopup.vue';
 
-defineOptions({
-  name: 'MainLayout'
-})
+export default {
+  setup() {
+    const leftDrawerOpen = ref(false)
+    const rightDrawerOpen = ref(false)
 
-const linksList = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
-]
+    const dialog = ref(false);
 
-const leftDrawerOpen = ref(false)
+    const showDialog = () => {
+      dialog.value = true;
+    };
 
-function toggleLeftDrawer () {
-  leftDrawerOpen.value = !leftDrawerOpen.value
+    const handleBookAdded = (book) => {
+      console.log('Book added:', book);
+      // Handle the book data as needed
+    };
+
+    return {
+      leftDrawerOpen,
+      toggleLeftDrawer() {
+        leftDrawerOpen.value = !leftDrawerOpen.value
+      },
+
+      rightDrawerOpen,
+      toggleRightDrawer() {
+        rightDrawerOpen.value = !rightDrawerOpen.value
+      },
+      dialog,
+      showDialog,
+      handleBookAdded
+    }
+  },
+  components: {
+    CurrentDate: DateComponent,
+    AddBookPopup,
+  },
+
 }
 </script>
